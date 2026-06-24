@@ -465,7 +465,7 @@ WHERE o.order_date >(
 ) 
 GROUP BY c.customer_id ,c.customer_name;
 
---q17)Find products whose revenue is greater than the average revenue of all products.
+--q16)Find products whose revenue is greater than the average revenue of all products.
 WITH avg_cte AS(
 SELECT
 	p.product_id ,
@@ -489,3 +489,46 @@ WHERE a.revenue >(
 			FROM
 				avg_cte a 
 )
+
+
+--q17)Find customers who purchased the same product more than once.
+SELECT
+	  c.customer_id,
+      c.customer_name ,
+	  p.product_name ,
+	  SUM(od.quantity) AS total_quantity
+FROM 
+	customers c
+JOIN 
+	orders o
+ON o.customer_id = c.customer_id 
+JOIN
+	order_details od
+ON od.order_id = o.order_id 
+JOIN 
+	products p
+ON p.product_id = od.product_id
+GROUP BY c.customer_id ,c.customer_name,p.product_name 
+HAVING SUM(od.quantity)>1;
+
+--q18)For each customer, rank their orders based on order value.
+SELECT
+		c.customer_name,
+		o.order_id,
+		SUM(p.price*od.quantity)  AS order_value,
+		DENSE_RANK() OVER (PARTITION BY c.customer_id,c.customer_name ORDER BY(SUM(p.price*od.quantity)) DESC)AS ranking
+		
+FROM 
+	customers c
+JOIN 
+	orders o
+ON o.customer_id = c.customer_id 
+JOIN
+	order_details od
+ON od.order_id = o.order_id 
+JOIN 
+	products p
+ON p.product_id = od.product_id
+GROUP BY c.customer_id ,c.customer_name,o.order_id;
+
+
