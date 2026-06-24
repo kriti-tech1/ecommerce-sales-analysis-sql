@@ -1,6 +1,6 @@
 # ecommerce-sales-analysis-sql
 
-                                          # E-Commerce Sales Analysis using PostgreSQL #
+   # E-Commerce Sales Analysis using PostgreSQL 
 
 ## Project Overview
 
